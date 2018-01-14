@@ -1,0 +1,12 @@
+var devtools = /./;
+devtools.toString = function() {
+  this.opened = true;
+}
+
+console.log(devtools);
+
+if (devtools.opened === true) {
+    alert('Панель разработчика открыта');
+} else {
+    alert('Панель разработчика закрыта');
+}
