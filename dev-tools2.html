@@ -1,0 +1,16 @@
+var checkStatus;
+
+var element = new Image();
+// var element = document.createElement('any');
+Object.defineProperty(element, 'id', {
+  get:function() {
+    checkStatus='on';
+    throw	new Error("This is a hack to check If chrome Devtools is open. Pay no attention.............................................................................................................");
+  }
+});
+
+setInterval(function() {
+    checkStatus = 'off';
+    console.dir(element);
+    document.querySelector('#devtool-status').innerHTML = checkStatus;
+}, 1000);
