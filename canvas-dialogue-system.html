@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+
+
+<img id="button-yes" src="button-yes.png" alt="yes" width="64" height="64" style="display:none">
+<img id="button-no"  src="button-no.png"  alt="no"  width="64" height="64" style="display:none">
+<div id="count">0</div>
+<canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+
+
+<script>
+var canvas = document.getElementById("myCanvas");
+function myCanvas() {
+	
+	var ctx = canvas.getContext("2d");
+	var imgYes = document.getElementById("button-yes");//size 64x64
+	var imgNo  = document.getElementById("button-no");//size 64x64
+	imgXsize = 64;
+	imgYsize = 64;
+	buttonYesXoffset = 10;
+	buttonYesYoffset = 200;
+	buttonNoXoffset = 100;
+	buttonNoYoffset = 200;
+	ctx.drawImage(imgYes,buttonYesXoffset,buttonYesYoffset);
+	ctx.drawImage(imgNo,buttonNoXoffset,buttonNoYoffset);
+	ctx.font             = "14px Calibri";
+	ctx.fillText("Execute citizen. Are you sure?",20,50);
+	canvas.addEventListener("touchstart", tap);
+	canvas.addEventListener("mousedown", tap);
+	count = 0;
+}
+
+window.onload = load;
+function load() {
+	myCanvas();
+}
+
+count = 0;
+	function getElementPosition (element) {
+	//thanks to William Alone
+       var parentOffset,
+       	   pos = {
+               x: element.offsetLeft,
+               y: element.offsetTop 
+           };
+           
+       if (element.offsetParent) {
+           parentOffset = getElementPosition(element.offsetParent);
+           pos.x += parentOffset.x;
+           pos.y += parentOffset.y;
+       }
+       return pos;
+    }
+function tap (e) {
+	addone();
+	pos = getElementPosition(canvas);
+	loc = {};
+	tapX = e.targetTouches ? e.targetTouches[0].pageX : e.pageX;
+	tapY = e.targetTouches ? e.targetTouches[0].pageY : e.pageY;
+	canvasScaleRatio = canvas.width / canvas.offsetWidth;
+	loc.x = (tapX - pos.x) * canvasScaleRatio;
+	loc.y = (tapY - pos.y) * canvasScaleRatio;
+	if (loc.x >= buttonYesXoffset && loc.x <= buttonYesXoffset+imgXsize) {
+		if (loc.y >= buttonYesYoffset && loc.y <= buttonYesYoffset+imgYsize) {
+			console.log("yes button pressed");
+		}
+	}
+	if (loc.x >= buttonNoXoffset && loc.x <= buttonNoXoffset+imgXsize) {
+		if (loc.y >= buttonNoYoffset && loc.y <= buttonNoYoffset+imgYsize) {
+			console.log("no button pressed");
+		}
+	}
+	
+}
+function addone () {
+	count = count + 1;
+	document.getElementById("count").innerHTML=count;
+}
+
+</script>
+
+</body>
+</html>
