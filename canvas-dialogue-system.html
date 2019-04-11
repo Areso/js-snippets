@@ -7,28 +7,33 @@
 <img id="button-yes" src="button-yes.png" alt="yes" width="64" height="64" style="display:none">
 <img id="button-no"  src="button-no.png"  alt="no"  width="64" height="64" style="display:none">
 <div id="count">0</div>
-<canvas id="myCanvas" width="250" height="300" style="border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="400" height="300" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
 
 
 <script>
 var canvas = document.getElementById("myCanvas");
-function myCanvas() {
-	
+function myCanvas(sceneText,answerTextOne,answerTextTwo) {
 	var ctx = canvas.getContext("2d");
-	var imgYes = document.getElementById("button-yes");//size 64x64
-	var imgNo  = document.getElementById("button-no");//size 64x64
+	//var imgYes = document.getElementById("button-yes");//size 64x64
+	//var imgNo  = document.getElementById("button-no");//size 64x64
 	imgXsize = 64;
 	imgYsize = 64;
 	buttonYesXoffset = 10;
 	buttonYesYoffset = 200;
 	buttonNoXoffset = 100;
 	buttonNoYoffset = 200;
-	ctx.drawImage(imgYes,buttonYesXoffset,buttonYesYoffset);
-	ctx.drawImage(imgNo,buttonNoXoffset,buttonNoYoffset);
+	ctx.fillStyle = '#bbc2c9';
+	ctx.fillRect(10,  200, 20, 20);
+	ctx.fillRect(100, 200, 20, 20);
+	ctx.fillStyle = 'black';
+	//ctx.drawImage(imgYes,buttonYesXoffset,buttonYesYoffset);
+	//ctx.drawImage(imgNo,buttonNoXoffset,buttonNoYoffset);
 	ctx.font             = "14px Calibri";
-	ctx.fillText("Execute citizen. Are you sure?",20,50);
+	ctx.fillText(sceneText,20,50);
+	ctx.fillText(answerTextOne,10,214);
+	ctx.fillText(answerTextTwo,100,214);
 	canvas.addEventListener("touchstart", tap);
 	canvas.addEventListener("mousedown", tap);
 	count = 0;
@@ -36,10 +41,11 @@ function myCanvas() {
 
 window.onload = load;
 function load() {
-	myCanvas();
+	myCanvas('Would you like to execute your citizen, mylord?','Yes','No');
 }
 
 count = 0;
+answer = 0;
 	function getElementPosition (element) {
 	//thanks to William Alone
        var parentOffset,
@@ -64,6 +70,7 @@ function tap (e) {
 	canvasScaleRatio = canvas.width / canvas.offsetWidth;
 	loc.x = (tapX - pos.x) * canvasScaleRatio;
 	loc.y = (tapY - pos.y) * canvasScaleRatio;
+	console.log(loc.x, loc.y);
 	if (loc.x >= buttonYesXoffset && loc.x <= buttonYesXoffset+imgXsize) {
 		if (loc.y >= buttonYesYoffset && loc.y <= buttonYesYoffset+imgYsize) {
 			console.log("yes button pressed");
