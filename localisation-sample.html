@@ -8,9 +8,15 @@
 	<div id="lblPlayGame" onclick="playGame()">lblPlayGame</div>
 	
 	<script>
+	include = function (url, fn) {
+		var e = document.createElement("script");
+		e.onload = fn;
+		e.src = url;
+		e.async=true;
+		document.getElementsByTagName("head")[0].appendChild(e);
+	};
 	//entry point
 	document.onload = loadStartLocale();
-	
 	//now we need some language for start
 	function loadStartLocale(){
 		//check whether browser support localStorage
@@ -33,23 +39,24 @@
 		if (language.indexOf('ru')!==-1) {
 			language = 'ru-RU';
 		}
-		if language
-		var locales = ['en-US','ru-RU'];
+		locales = ['en-US','ru-RU'];
 		default_locale = 'en-US';
-		
+		if (checkValue(language, locales)===1) {
+			loadLocale(language);
+		} else {
+			loadLocale(default_locale);
+		}
 	}
 	function checkValue(value,arr){
-	  var status = 'Not exist';
-	 
-	  for(var i=0; i<arr.length; i++){
-		var name = arr[i];
-		if(name == value){
-		  status = 'Exist';
-		  break;
+	    var status = -1;
+	    for(var i=0; i<arr.length; i++){
+			var name = arr[i];
+			if(name == value){
+				status = 1;
+			break;
+			}
 		}
-	  }
-
-	  return status;
+		return status;
 	}
 	function getBrowserLanguage() {
 		//if not set, then
@@ -73,18 +80,17 @@
 			return false;
 		}
 	}
-	include = function (url, fn) {
-		var e = document.createElement("script");
-		e.onload = fn;
-		e.src = url;
-		e.async=true;
-		document.getElementsByTagName("head")[0].appendChild(e);
-	};
 	function loadLocale(language){
 		file = language+'.js';
 		include(file,function(){
-			document.getElementById('lblPlayGame').innerHTML=arr[0];
+			document.getElementById('lblPlayGame').innerHTML=localeStrings[0];
 		});
+		isLocalStorageSupport = checkLocalStorageSupport();
+		if (isLocalStorageSupport===true) { //for all modern browsers, including IE8 and newer
+			localStorage.setItem("areso-lang", language); //try save
+		} else {
+			document.cookie = "areso-lang="+language;
+		}
 	};
 	</script>
 	</body>
