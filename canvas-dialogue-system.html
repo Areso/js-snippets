@@ -1,39 +1,82 @@
 <!DOCTYPE html>
 <html>
 <body>
-
-
-
-<img id="button-yes" src="button-yes.png" alt="yes" width="64" height="64" style="display:none">
-<img id="button-no"  src="button-no.png"  alt="no"  width="64" height="64" style="display:none">
 <div id="count">0</div>
-<canvas id="myCanvas" width="400" height="300" style="border:1px solid #d3d3d3;">
+<div id="Image" onclick="raiseQuestion()">Click me!</div>
+<div id="ImageLess" onclick="raiseQuestionImageless()">Click me!</div>
+<img src = "background.png"></img>
+<canvas id="myDCanvas" width="600" height="200" style="position: absolute; left: 20px; top: 100px; border:1px solid black; z-index: -1">
 Your browser does not support the HTML5 canvas tag.</canvas>
 
-
-
 <script>
-var canvas = document.getElementById("myCanvas");
-function myCanvas(sceneText,answerTextOne,answerTextTwo) {
+var canvas = document.getElementById("myDCanvas");
+function myCanvas(sceneText,answerTextOne,answerTextTwo,imageName) {
 	var ctx = canvas.getContext("2d");
-	//var imgYes = document.getElementById("button-yes");//size 64x64
-	//var imgNo  = document.getElementById("button-no");//size 64x64
-	imgXsize = 64;
-	imgYsize = 64;
-	buttonYesXoffset = 10;
-	buttonYesYoffset = 200;
-	buttonNoXoffset = 100;
-	buttonNoYoffset = 200;
-	ctx.fillStyle = '#bbc2c9';
-	ctx.fillRect(10,  200, 20, 20);
-	ctx.fillRect(100, 200, 20, 20);
-	ctx.fillStyle = 'black';
-	//ctx.drawImage(imgYes,buttonYesXoffset,buttonYesYoffset);
-	//ctx.drawImage(imgNo,buttonNoXoffset,buttonNoYoffset);
-	ctx.font             = "14px Calibri";
-	ctx.fillText(sceneText,20,50);
-	ctx.fillText(answerTextOne,10,214);
-	ctx.fillText(answerTextTwo,100,214);
+	mystyle = 'position: absolute; left: 20px; top: 100px; border:1px solid black;';
+	document.getElementById("myDCanvas").style=mystyle+'z-index:99';
+	img1sizeX     = 0;
+	img1sizeY     = 0;
+	imageOffsetX  = 10;
+	imageOffsetY  = 30;
+	if (imageName !== '') {
+		var src   = imageName;
+		img1      = loadImage(src, composite);
+	} else {
+		ctx.fillStyle     = "rgb(255, 255, 255)"
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
+		ctx.globalAlpha   = 0.8;
+		ctx.fillStyle     = "white"
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		placeText();
+	}
+	function composite() { 
+		ctx.fillStyle     = "rgb(255, 255, 255)"
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
+		ctx.globalAlpha   = 0.8;
+		ctx.fillStyle     = "white"
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.globalAlpha   = 1;
+		ctx.drawImage(img1, imageOffsetX, imageOffsetY);
+		ctx.globalAlpha   = 0.8;
+		img1sizeX         = img1.width;
+		img1sizeY         = img1.length;
+		placeText();
+	}
+	function loadImage(src, fonload) {
+		var img    = new Image();
+		img.onload = fonload;
+		img.src    = src;
+		return img;
+	}
+	function placeText() {
+		ctx.fillStyle     = 'black';
+		ctx.font          = "14px Calibri";
+		sceneTextArray    = sceneText.split("\n");
+		sceneTextLength   = sceneTextArray.length;
+		sceneLines        = 0;
+		sceneOffsetX      = img1sizeX + 20;
+		sceneOffsetY      = 40;
+		ctx.globalAlpha   = 1;
+		while (sceneLines < sceneTextLength) {
+			ctx.fillText(sceneTextArray[sceneLines], sceneOffsetX, sceneOffsetY + sceneLines*20);
+			sceneLines    = sceneLines+1;
+		}
+		buttonsOffsetY    = sceneOffsetY + sceneLines*20 + 20;
+		buttonOneLength   = answerTextOne.length*6 + 20;
+		buttonTwoLength   = answerTextTwo.length*6 + 20;
+		ctx.fillStyle     = '#bbc2c9';
+		buttonOneOffsetX  = img1sizeX + imageOffsetX + 10;
+		buttonTwoOffsetX  = buttonOneOffsetX+buttonOneLength + 50;
+		ctx.globalAlpha   = 0.8;
+		ctx.fillRect(buttonOneOffsetX, buttonsOffsetY, buttonOneLength, 20);
+		ctx.fillRect(buttonTwoOffsetX, buttonsOffsetY, buttonTwoLength, 20);
+		ctx.fillStyle     = 'black';
+		ctx.globalAlpha   = 1;
+		ctx.fillText(answerTextOne,buttonOneOffsetX+5,buttonsOffsetY+14);
+		ctx.fillText(answerTextTwo,buttonTwoOffsetX+5,buttonsOffsetY+14);
+	}
 	canvas.addEventListener("touchstart", tap);
 	canvas.addEventListener("mousedown", tap);
 	count = 0;
@@ -41,12 +84,19 @@ function myCanvas(sceneText,answerTextOne,answerTextTwo) {
 
 window.onload = load;
 function load() {
-	myCanvas('Would you like to execute your citizen, mylord?','Yes','No');
 }
 
+function raiseQuestion() {
+	myCanvas('Would you like to cruelly execute your fellow citizen in front of townsfolk,\n my lord?',
+	'Yessss, in the most bloody way!','No', 'trapdoor.png');	
+}
+function raiseQuestionImageless () {
+	myCanvas('Would you like to cruelly execute your fellow citizen in front of townsfolk,\n my lord?',
+	'Yessss, in the most bloody way!','No', '');
+}
 count = 0;
 answer = 0;
-	function getElementPosition (element) {
+function getElementPosition (element) {
 	//thanks to William Alone
        var parentOffset,
        	   pos = {
@@ -71,14 +121,18 @@ function tap (e) {
 	loc.x = (tapX - pos.x) * canvasScaleRatio;
 	loc.y = (tapY - pos.y) * canvasScaleRatio;
 	console.log(loc.x, loc.y);
-	if (loc.x >= buttonYesXoffset && loc.x <= buttonYesXoffset+imgXsize) {
-		if (loc.y >= buttonYesYoffset && loc.y <= buttonYesYoffset+imgYsize) {
-			console.log("yes button pressed");
+	if (loc.x >= buttonOneOffsetX && loc.x <= buttonOneOffsetX+buttonOneLength) {
+		if (loc.y >= buttonsOffsetY && loc.y <= buttonsOffsetY+20) {
+			console.log("first button pressed");
+			document.getElementById("myDCanvas").style=mystyle+'z-index:-1';
+			userAnswer = 0;
 		}
 	}
-	if (loc.x >= buttonNoXoffset && loc.x <= buttonNoXoffset+imgXsize) {
-		if (loc.y >= buttonNoYoffset && loc.y <= buttonNoYoffset+imgYsize) {
-			console.log("no button pressed");
+	if (loc.x >= buttonTwoOffsetX && loc.x <= buttonTwoOffsetX+buttonTwoLength) {
+		if (loc.y >= buttonsOffsetY && loc.y <= buttonsOffsetY+20) {
+			console.log("second button pressed");
+			document.getElementById("myDCanvas").style=mystyle+'z-index:-1';
+			userAnswer = 1;
 		}
 	}
 	
