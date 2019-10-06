@@ -1,0 +1,9 @@
+arr = [];
+for (let i = 0; i < localStorage.length; i++) {
+    if (localStorage.key(i).indexOf('the-name-to-delete') > -1) {
+        arr.push(localStorage.key(i));
+    }
+}
+for (let i = 0; i < arr.length; i++) {
+    localStorage.removeItem(arr[i]);
+}
